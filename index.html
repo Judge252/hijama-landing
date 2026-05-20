@@ -68,9 +68,70 @@
   <main>
 
     <!-- Hero Section -->
-    <section class="hero-section section-padding">
+    <section class="hero-section section-padding" aria-label="القسم الرئيسي">
       <div class="container hero-grid">
 
+        <!-- New Wide Hero Images -->
+        <div class="hero-visual hero-visual-wide">
+
+          <div class="hero-image-showcase" aria-label="صور العيادة">
+
+            <div class="hero-image-track">
+
+              <figure class="hero-image-slide is-active">
+                <img src="1.jpeg" alt="تجربة حجامة في العيادة" />
+                <figcaption>
+                  <strong>تجربة مريحة</strong>
+                  <span>أجواء هادئة ونظيفة قبل الجلسة</span>
+                </figcaption>
+              </figure>
+
+              <figure class="hero-image-slide">
+                <img src="2.jpeg" alt="آثار الحجامة بعد الجلسة" />
+                <figcaption>
+                  <strong>اهتمام بالتفاصيل</strong>
+                  <span>متابعة وتعقيم وتجهيز بعناية</span>
+                </figcaption>
+              </figure>
+
+              <figure class="hero-image-slide">
+                <img src="3.jpeg" alt="غرفة الحجامة في العيادة" />
+                <figcaption>
+                  <strong>راحة وخصوصية</strong>
+                  <span>مكان مجهز لتجربة منظمة وآمنة</span>
+                </figcaption>
+              </figure>
+
+            </div>
+
+            <div class="hero-image-controls" aria-label="التحكم في الصور">
+              <button
+                type="button"
+                class="hero-dot is-active"
+                data-slide="0"
+                aria-label="الصورة الأولى"
+              ></button>
+
+              <button
+                type="button"
+                class="hero-dot"
+                data-slide="1"
+                aria-label="الصورة الثانية"
+              ></button>
+
+              <button
+                type="button"
+                class="hero-dot"
+                data-slide="2"
+                aria-label="الصورة الثالثة"
+              ></button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Hero Content -->
         <div class="hero-content">
 
           <div class="eyebrow glass-pill">
@@ -110,112 +171,6 @@
               <i class="fa-solid fa-heart-pulse"></i>
               <span>راحة وخصوصية</span>
             </div>
-          </div>
-
-        </div>
-
-        <!-- Interactive Hero Image Gallery -->
-        <div class="hero-visual">
-
-          <div class="hero-gallery liquid-glass-card" aria-label="معرض صور تفاعلي">
-
-            <input
-              type="radio"
-              name="hero-gallery"
-              id="hero-image-1"
-              class="gallery-radio"
-              checked
-            />
-
-            <input
-              type="radio"
-              name="hero-gallery"
-              id="hero-image-2"
-              class="gallery-radio"
-            />
-
-            <input
-              type="radio"
-              name="hero-gallery"
-              id="hero-image-3"
-              class="gallery-radio"
-            />
-
-            <div class="gallery-top">
-              <span class="gallery-badge">
-                <i class="fa-solid fa-images"></i>
-                معرض العيادة
-              </span>
-
-              <span class="gallery-hint">
-                اضغط على الصور للتبديل
-              </span>
-            </div>
-
-            <div class="gallery-stage">
-
-              <figure class="gallery-slide gallery-slide-1">
-                <img src="1.jpeg" alt="صورة من تجربة الحجامة الأولى" />
-                <figcaption>
-                  <strong>تجربة مريحة</strong>
-                  <span>أجواء هادئة ومنظمة قبل الجلسة</span>
-                </figcaption>
-              </figure>
-
-              <figure class="gallery-slide gallery-slide-2">
-                <img src="2.jpeg" alt="صورة من تجربة الحجامة الثانية" />
-                <figcaption>
-                  <strong>اهتمام بالتفاصيل</strong>
-                  <span>تعقيم وتجهيز بعناية لكل زائر</span>
-                </figcaption>
-              </figure>
-
-              <figure class="gallery-slide gallery-slide-3">
-                <img src="3.jpeg" alt="صورة من تجربة الحجامة الثالثة" />
-                <figcaption>
-                  <strong>رعاية وخصوصية</strong>
-                  <span>متابعة واضحة قبل وبعد الجلسة</span>
-                </figcaption>
-              </figure>
-
-            </div>
-
-            <div class="gallery-thumbs" aria-label="اختيار صورة من المعرض">
-
-              <label for="hero-image-1" class="gallery-thumb gallery-thumb-1">
-                <img src="1.jpeg" alt="معاينة الصورة الأولى" />
-                <span>01</span>
-              </label>
-
-              <label for="hero-image-2" class="gallery-thumb gallery-thumb-2">
-                <img src="2.jpeg" alt="معاينة الصورة الثانية" />
-                <span>02</span>
-              </label>
-
-              <label for="hero-image-3" class="gallery-thumb gallery-thumb-3">
-                <img src="3.jpeg" alt="معاينة الصورة الثالثة" />
-                <span>03</span>
-              </label>
-
-            </div>
-
-            <div class="gallery-info">
-              <div>
-                <i class="fa-solid fa-shield-heart"></i>
-                <span>تعقيم كامل</span>
-              </div>
-
-              <div>
-                <i class="fa-solid fa-heart-pulse"></i>
-                <span>راحة وهدوء</span>
-              </div>
-
-              <div>
-                <i class="fa-solid fa-user-doctor"></i>
-                <span>متابعة مختص</span>
-              </div>
-            </div>
-
           </div>
 
         </div>
@@ -332,7 +287,7 @@
       </div>
     </section>
 
-    <!-- Safety / Warning Section -->
+    <!-- Safety Section -->
     <section class="safety-section section-padding" id="safety">
       <div class="container">
 
@@ -414,21 +369,43 @@
           </div>
 
           <div class="social-links" aria-label="روابط التواصل الاجتماعي">
-            <a href="https://www.facebook.com/share/1C7rk49nye/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
+
+            <a
+              href="https://www.facebook.com/share/1C7rk49nye/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener"
+              aria-label="Facebook"
+            >
               <i class="fab fa-facebook"></i>
             </a>
 
-            <a href="https://www.instagram.com/theclinic.sal?igsh=ZmxyMDZkYW40eHU0" target="_blank" aria-label="Instagram">
+            <a
+              href="https://www.instagram.com/theclinic.sal?igsh=ZmxyMDZkYW40eHU0"
+              target="_blank"
+              rel="noopener"
+              aria-label="Instagram"
+            >
               <i class="fab fa-instagram"></i>
             </a>
 
-            <a href="https://wa.me/972526020026" target="_blank" aria-label="WhatsApp">
+            <a
+              href="https://wa.me/972526020026"
+              target="_blank"
+              rel="noopener"
+              aria-label="WhatsApp"
+            >
               <i class="fab fa-whatsapp"></i>
             </a>
 
-            <a href="https://www.tiktok.com/@theclinic.sal?_t=ZS-8z34Q5Yhkhz&_r=1" target="_blank" aria-label="TikTok">
+            <a
+              href="https://www.tiktok.com/@theclinic.sal?_t=ZS-8z34Q5Yhkhz&_r=1"
+              target="_blank"
+              rel="noopener"
+              aria-label="TikTok"
+            >
               <i class="fab fa-tiktok"></i>
             </a>
+
           </div>
 
         </div>

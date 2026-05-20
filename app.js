@@ -1,13 +1,15 @@
 // ===============================
 // Hijama Landing Page JS
+// Practical Wide Hero Slider
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const header = document.querySelector(".site-header");
   const menuBtn = document.querySelector(".mobile-menu-btn");
-  const navLinks = document.querySelectorAll(".main-nav a");
-  const sections = document.querySelectorAll("section[id]");
+  const mainNav = document.querySelector(".main-nav");
+  const navLinks = document.querySelectorAll(".main-nav a, .floating-dock a");
+  const sections = document.querySelectorAll("section[id], header[id]");
   const dock = document.querySelector(".floating-dock");
   const year = document.getElementById("year");
 
@@ -23,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mobile Menu Toggle
   // ===============================
 
-  if (menuBtn) {
+  if (menuBtn && mainNav) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("menu-open");
 
@@ -31,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       menuBtn.setAttribute("aria-label", isOpen ? "إغلاق القائمة" : "فتح القائمة");
 
       const icon = menuBtn.querySelector("i");
+
       if (icon) {
         icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
       }
@@ -45,11 +48,50 @@ document.addEventListener("DOMContentLoaded", () => {
         menuBtn.setAttribute("aria-label", "فتح القائمة");
 
         const icon = menuBtn.querySelector("i");
+
         if (icon) {
           icon.className = "fa-solid fa-bars";
         }
       }
     });
+  });
+
+  // Close menu when clicking outside it
+  document.addEventListener("click", (event) => {
+    if (!body.classList.contains("menu-open")) return;
+    if (!mainNav || !menuBtn) return;
+
+    const clickedInsideMenu = mainNav.contains(event.target);
+    const clickedMenuButton = menuBtn.contains(event.target);
+
+    if (!clickedInsideMenu && !clickedMenuButton) {
+      body.classList.remove("menu-open");
+
+      const icon = menuBtn.querySelector("i");
+
+      if (icon) {
+        icon.className = "fa-solid fa-bars";
+      }
+
+      menuBtn.setAttribute("aria-label", "فتح القائمة");
+    }
+  });
+
+  // Close menu with Escape key
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+
+    body.classList.remove("menu-open");
+
+    if (menuBtn) {
+      const icon = menuBtn.querySelector("i");
+
+      if (icon) {
+        icon.className = "fa-solid fa-bars";
+      }
+
+      menuBtn.setAttribute("aria-label", "فتح القائمة");
+    }
   });
 
   // ===============================
@@ -67,37 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   updateHeaderState();
-  window.addEventListener("scroll", updateHeaderState);
-
-  // ===============================
-  // Active Navigation Link
-  // ===============================
-
-  const updateActiveLink = () => {
-    const scrollPosition = window.scrollY + 180;
-
-    sections.forEach((section) => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.offsetHeight;
-      const sectionId = section.getAttribute("id");
-
-      if (
-        scrollPosition >= sectionTop &&
-        scrollPosition < sectionTop + sectionHeight
-      ) {
-        navLinks.forEach((link) => {
-          link.classList.remove("active-link");
-
-          if (link.getAttribute("href") === `#${sectionId}`) {
-            link.classList.add("active-link");
-          }
-        });
-      }
-    });
-  };
-
-  updateActiveLink();
-  window.addEventListener("scroll", updateActiveLink);
+  window.addEventListener("scroll", updateHeaderState, { passive: true });
 
   // ===============================
   // Smooth Scroll for Internal Links
@@ -111,119 +123,172 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const targetElement = document.querySelector(targetId);
 
-      if (targetElement) {
-        event.preventDefault();
+      if (!targetElement) return;
 
-        targetElement.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
+      event.preventDefault();
+
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     });
   });
+
+  // ===============================
+  // Active Navigation Link
+  // ===============================
+
+  const updateActiveLink = () => {
+    let currentSectionId = "top";
+    const scrollPosition = window.scrollY + 180;
+
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      const sectionId = section.getAttribute("id");
+
+      if (
+        sectionId &&
+        scrollPosition >= sectionTop &&
+        scrollPosition < sectionTop + sectionHeight
+      ) {
+        currentSectionId = sectionId;
+      }
+    });
+
+    navLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+
+      link.classList.toggle("active-link", href === `#${currentSectionId}`);
+    });
+  };
+
+  updateActiveLink();
+  window.addEventListener("scroll", updateActiveLink, { passive: true });
+
+  // ===============================
+  // Practical Wide Hero Image Slider
+  // ===============================
+
+  const heroShowcase = document.querySelector(".hero-image-showcase");
+  const heroSlides = document.querySelectorAll(".hero-image-slide");
+  const heroDots = document.querySelectorAll(".hero-dot");
+
+  let heroCurrentSlide = 0;
+  let heroSliderInterval = null;
+
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  const showHeroSlide = (index) => {
+    if (!heroSlides.length) return;
+
+    heroCurrentSlide = index;
+
+    heroSlides.forEach((slide, slideIndex) => {
+      slide.classList.toggle("is-active", slideIndex === heroCurrentSlide);
+    });
+
+    heroDots.forEach((dot, dotIndex) => {
+      dot.classList.toggle("is-active", dotIndex === heroCurrentSlide);
+    });
+  };
+
+  const nextHeroSlide = () => {
+    if (!heroSlides.length) return;
+
+    const nextIndex = (heroCurrentSlide + 1) % heroSlides.length;
+    showHeroSlide(nextIndex);
+  };
+
+  const stopHeroSlider = () => {
+    if (heroSliderInterval) {
+      clearInterval(heroSliderInterval);
+      heroSliderInterval = null;
+    }
+  };
+
+  const startHeroSlider = () => {
+    if (prefersReducedMotion || heroSlides.length <= 1) return;
+
+    stopHeroSlider();
+    heroSliderInterval = setInterval(nextHeroSlide, 4500);
+  };
+
+  heroDots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      const index = Number(dot.dataset.slide);
+
+      if (Number.isNaN(index)) return;
+
+      showHeroSlide(index);
+      startHeroSlider();
+    });
+  });
+
+  if (heroShowcase) {
+    heroShowcase.addEventListener("mouseenter", stopHeroSlider);
+    heroShowcase.addEventListener("mouseleave", startHeroSlider);
+
+    heroShowcase.addEventListener("focusin", stopHeroSlider);
+    heroShowcase.addEventListener("focusout", startHeroSlider);
+
+    heroShowcase.addEventListener("touchstart", stopHeroSlider, {
+      passive: true,
+    });
+
+    heroShowcase.addEventListener("touchend", startHeroSlider, {
+      passive: true,
+    });
+  }
+
+  showHeroSlide(0);
+  startHeroSlider();
 
   // ===============================
   // Reveal Animation on Scroll
   // ===============================
 
   const revealElements = document.querySelectorAll(
-    ".feature-card, .instruction-card, .safety-card, .process-card, .social-card, .hero-content, .hero-gallery"
+    [
+      ".hero-content",
+      ".hero-image-showcase",
+      ".feature-card",
+      ".instruction-card",
+      ".safety-card",
+      ".process-card",
+      ".social-card",
+    ].join(", ")
   );
 
   revealElements.forEach((element) => {
     element.classList.add("reveal-item");
   });
 
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.14,
-    }
-  );
-
-  revealElements.forEach((element) => {
-    revealObserver.observe(element);
-  });
-
-  // ===============================
-  // Interactive Hero Gallery
-  // ===============================
-
-  const heroGallery = document.querySelector(".hero-gallery");
-  const galleryRadios = Array.from(
-    document.querySelectorAll('input[name="hero-gallery"]')
-  );
-  const galleryThumbs = document.querySelectorAll(".gallery-thumb");
-
-  let currentGalleryIndex = 0;
-  let galleryInterval = null;
-
-  const showGalleryImage = (index) => {
-    if (!galleryRadios.length) return;
-
-    currentGalleryIndex = index;
-
-    galleryRadios.forEach((radio, radioIndex) => {
-      radio.checked = radioIndex === currentGalleryIndex;
-    });
-  };
-
-  const showNextGalleryImage = () => {
-    if (!galleryRadios.length) return;
-
-    const nextIndex = (currentGalleryIndex + 1) % galleryRadios.length;
-    showGalleryImage(nextIndex);
-  };
-
-  const startGalleryAutoPlay = () => {
-    if (!galleryRadios.length) return;
-
-    stopGalleryAutoPlay();
-    galleryInterval = setInterval(showNextGalleryImage, 4200);
-  };
-
-  const stopGalleryAutoPlay = () => {
-    if (galleryInterval) {
-      clearInterval(galleryInterval);
-      galleryInterval = null;
-    }
-  };
-
-  galleryRadios.forEach((radio, index) => {
-    if (radio.checked) {
-      currentGalleryIndex = index;
-    }
-
-    radio.addEventListener("change", () => {
-      if (radio.checked) {
-        currentGalleryIndex = index;
+  if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.14,
       }
+    );
+
+    revealElements.forEach((element) => {
+      revealObserver.observe(element);
     });
-  });
-
-  galleryThumbs.forEach((thumb, index) => {
-    thumb.addEventListener("click", () => {
-      showGalleryImage(index);
-      startGalleryAutoPlay();
+  } else {
+    revealElements.forEach((element) => {
+      element.classList.add("is-visible");
     });
-  });
-
-  if (heroGallery) {
-    heroGallery.addEventListener("mouseenter", stopGalleryAutoPlay);
-    heroGallery.addEventListener("mouseleave", startGalleryAutoPlay);
-
-    heroGallery.addEventListener("focusin", stopGalleryAutoPlay);
-    heroGallery.addEventListener("focusout", startGalleryAutoPlay);
   }
-
-  startGalleryAutoPlay();
 
   // ===============================
   // Floating Dock Hide on Footer
@@ -231,15 +296,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const footer = document.querySelector(".site-footer");
 
-  if (dock && footer) {
+  if (dock && footer && "IntersectionObserver" in window) {
     const dockObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            dock.classList.add("dock-hidden");
-          } else {
-            dock.classList.remove("dock-hidden");
-          }
+          dock.classList.toggle("dock-hidden", entry.isIntersecting);
         });
       },
       {
@@ -264,9 +325,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `custom-toast ${type}`;
 
-    const icon = type === "success"
-      ? "fa-solid fa-circle-check"
-      : "fa-solid fa-circle-exclamation";
+    const icon =
+      type === "success"
+        ? "fa-solid fa-circle-check"
+        : "fa-solid fa-circle-exclamation";
 
     toast.innerHTML = `
       <i class="${icon}"></i>
@@ -289,7 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ===============================
-  // Social Link Placeholder Alert
+  // Social Link Placeholder Safety
   // ===============================
 
   const socialLinks = document.querySelectorAll(".social-links a");
@@ -298,9 +360,9 @@ document.addEventListener("DOMContentLoaded", () => {
     link.addEventListener("click", (event) => {
       const href = link.getAttribute("href");
 
-      if (href === "#") {
+      if (!href || href === "#") {
         event.preventDefault();
-        showToast("أضف رابط الصفحة الحقيقي هنا", "success");
+        showToast("أضف رابط الصفحة الحقيقي هنا", "error");
       }
     });
   });
