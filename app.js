@@ -171,20 +171,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===============================
 
   const heroShowcase = document.querySelector(".hero-image-showcase");
+  const heroTrack = document.querySelector(".hero-image-track");
   const heroSlides = document.querySelectorAll(".hero-image-slide");
   const heroDots = document.querySelectorAll(".hero-dot");
 
   let heroCurrentSlide = 0;
   let heroSliderInterval = null;
+  let scrollUpdateTimeout = null;
+  let heroTouchStartX = 0;
+  let heroTouchStartY = 0;
+  let heroTouching = false;
 
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
-  const showHeroSlide = (index) => {
+  const showHeroSlide = (index, shouldScroll = true) => {
     if (!heroSlides.length) return;
 
-    heroCurrentSlide = index;
+    heroCurrentSlide = ((index % heroSlides.length) + heroSlides.length) % heroSlides.length;
 
     heroSlides.forEach((slide, slideIndex) => {
       slide.classList.toggle("is-active", slideIndex === heroCurrentSlide);
@@ -193,6 +198,43 @@ document.addEventListener("DOMContentLoaded", () => {
     heroDots.forEach((dot, dotIndex) => {
       dot.classList.toggle("is-active", dotIndex === heroCurrentSlide);
     });
+
+    const targetSlide = heroSlides[heroCurrentSlide];
+
+    if (heroTrack && shouldScroll && targetSlide) {
+      targetSlide.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "nearest",
+        inline: "start",
+      });
+    }
+  };
+
+  const getNearestHeroSlideIndex = () => {
+    if (!heroTrack || !heroSlides.length) return heroCurrentSlide;
+
+    const trackRect = heroTrack.getBoundingClientRect();
+    const trackCenter = trackRect.left + trackRect.width / 2;
+    let nearestIndex = heroCurrentSlide;
+    let nearestDistance = Infinity;
+
+    heroSlides.forEach((slide, index) => {
+      const rect = slide.getBoundingClientRect();
+      const slideCenter = rect.left + rect.width / 2;
+      const distance = Math.abs(slideCenter - trackCenter);
+
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestIndex = index;
+      }
+    });
+
+    return nearestIndex;
+  };
+
+  const updateSlideFromScroll = () => {
+    const nearestIndex = getNearestHeroSlideIndex();
+    showHeroSlide(nearestIndex, false);
   };
 
   const nextHeroSlide = () => {
@@ -241,6 +283,56 @@ document.addEventListener("DOMContentLoaded", () => {
     heroShowcase.addEventListener("touchend", startHeroSlider, {
       passive: true,
     });
+  }
+
+  if (heroTrack) {
+    heroTrack.addEventListener(
+      "scroll",
+      () => {
+        clearTimeout(scrollUpdateTimeout);
+        scrollUpdateTimeout = window.setTimeout(updateSlideFromScroll, 120);
+      },
+      { passive: true }
+    );
+
+    heroTrack.addEventListener(
+      "touchstart",
+      (event) => {
+        if (event.touches.length !== 1) return;
+        heroTouching = true;
+        heroTouchStartX = event.touches[0].clientX;
+        heroTouchStartY = event.touches[0].clientY;
+        stopHeroSlider();
+      },
+      { passive: true }
+    );
+
+    heroTrack.addEventListener(
+      "touchend",
+      (event) => {
+        if (!heroTouching) return;
+        heroTouching = false;
+
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - heroTouchStartX;
+        const deltaY = touch.clientY - heroTouchStartY;
+        const absDeltaX = Math.abs(deltaX);
+        const absDeltaY = Math.abs(deltaY);
+
+        if (absDeltaX > 50 && absDeltaX > absDeltaY * 1.5) {
+          if (deltaX < 0) {
+            showHeroSlide(heroCurrentSlide + 1);
+          } else {
+            showHeroSlide(heroCurrentSlide - 1);
+          }
+        } else {
+          updateSlideFromScroll();
+        }
+
+        startHeroSlider();
+      },
+      { passive: true }
+    );
   }
 
   showHeroSlide(0);
