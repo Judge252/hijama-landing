@@ -49,9 +49,20 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 body {
+  position: relative;
   min-height: 100vh;
   font-family: "Cairo", sans-serif;
   color: var(--text-main);
@@ -88,6 +99,23 @@ button {
 .container {
   width: min(100% - 32px, var(--container));
   margin-inline: auto;
+  max-width: 100%;
+}
+
+main,
+section,
+.site-header,
+.container,
+.hero-section,
+.hero-grid,
+.hero-visual,
+.hero-image-showcase,
+.features-grid,
+.instructions-grid,
+.process-grid,
+.social-card,
+.footer-container {
+  max-width: 100%;
 }
 
 .section-padding {
@@ -459,6 +487,7 @@ button {
   justify-content: stretch;
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 .hero-visual::before {
@@ -1017,6 +1046,28 @@ button {
 }
 
 @media (max-width: 720px) {
+  .page-bg,
+  .hero-section,
+  .hero-visual,
+  .hero-image-showcase,
+  .site-header,
+  .floating-dock {
+    max-width: 100vw;
+  }
+
+  .hero-visual::before {
+    width: min(360px, 90vw);
+    height: min(360px, 90vw);
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .glass-card:hover {
+    transform: none;
+  }
+
   .container {
     width: min(100% - 24px, var(--container));
   }
